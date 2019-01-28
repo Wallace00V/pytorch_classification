@@ -19,8 +19,8 @@ optimizer = optim.SGD(model.parameters(),lr = 0.01,momentum=0.9,weight_decay=0.0
 criterion = nn.CrossEntropyLoss().to(device)
 
 def train():
+    writer = SummaryWriter(log_dir="./logs/{}".format(model.__class__.__name__))
     for epoch in range(20):
-        writer = SummaryWriter(log_dir="./logs/{}".format(model.__class__.__name__))
         if epoch%5==0 and epoch!=0:
             for param_group in optimizer.param_groups:
                 param_group['lr'] = param_group['lr'] * 0.1
@@ -42,7 +42,7 @@ def train():
             optimizer.step()
 
             writer.add_scalar('train/loss', loss.data.cpu().numpy(), iteration)
-            print("epoch:" + str(epoch) + " " + "iterations:" + str(iter)+ " "+"loss: ",loss.data.numpy())
+            print("epoch:" + str(epoch) + " " + "iterations:" + str(iter)+ " "+"loss: ",loss.data.cpu().numpy())
 
             model_name = "{}_iterations_{}.pth".format(model.__class__.__name__, iteration)
             model_dir = "./checkpoints/{}".format(model_name)
@@ -50,8 +50,8 @@ def train():
                 torch.save(model.state_dict(), model_dir)
                 test(valdata,writer,iteration)
 
-        print("Finished Training")
-        writer.close()
+    print("Finished Training")
+    writer.close()
 
 
 def test(valdata,writer,iteration):
