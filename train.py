@@ -46,7 +46,7 @@ def train():
 
             model_name = "{}_iterations_{}.pth".format(model.__class__.__name__, iteration)
             model_dir = "./checkpoints/{}".format(model_name)
-            if iter%100==0:
+            if iteration%100==0:
                 torch.save(model.state_dict(), model_dir)
                 test(valdata,writer,iteration)
 
